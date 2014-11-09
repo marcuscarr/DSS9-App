@@ -1,0 +1,16 @@
+{
+    "contents" : "shinyUI(pageWithSidebar(\n    \n    # Application title\n    titlePanel(\"Girth, Height and Volume for Black Cherry Trees\"),\n    \n    helpText(\"This app explores the built-in\", code(\"trees\"), \"dataset in R.\", \n             br(), br(),\n             \"Entering a value for the X-axis variable in 'Predictor'\",\n             \"will give the predicted Y-axis value, rounded to 0.1.\", \n             br(),\n             \"The predicted value and one-sigma CI (68%) are shown\", \n             \"on the scatter plot.\"),\n    \n    # Pulldown menus for variables to plot\n    sidebarLayout(\n        sidebarPanel(\n            selectInput(\"xcol\", label = \"Select X-axis variable\",\n                        names(trees), selected = names(trees)[[1]]),\n            \n            selectInput(\"ycol\", label = \"Select Y-axis variable\",\n                        names(trees), selected = names(trees)[[3]]),\n            \n            numericInput(\"num\", label = \"Predictor\", value = \"\", step = 0.5)\n        ),\n        \n        # Show a plot of the generated distribution\n        mainPanel(\n            plotOutput(\"treePlot\"),\n            div(textOutput(\"error_text\")),\n            div(textOutput(\"fit_text\"))\n        )\n    )\n))\n",
+    "created" : 1415561691602.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1826959008",
+    "id" : "AFD89667",
+    "lastKnownWriteTime" : 1415572306,
+    "path" : "~/coursera/dataprod/trees-app/ui.R",
+    "project_path" : "ui.R",
+    "properties" : {
+    },
+    "source_on_save" : false,
+    "type" : "r_source"
+}
