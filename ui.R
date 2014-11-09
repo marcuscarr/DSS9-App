@@ -20,7 +20,8 @@ shinyUI(pageWithSidebar(
             selectInput("ycol", label = "Select Y-axis variable",
                         names(trees), selected = names(trees)[[3]]),
             
-            numericInput("num", label = "Predictor", value = "", step = 0.5)
+            helpText(textOutput("num_text")),
+            numericInput("num", label = "", value = "", step = 0.5)
         ),
         
         # Show a plot of the generated distribution

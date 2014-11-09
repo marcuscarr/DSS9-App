@@ -46,6 +46,10 @@ shinyServer(function(input, output) {
         }
     })
     
+    output$num_text <- reactive({
+        paste("Enter a value for", input$xcol)
+    })
+    
     output$fit_text <- reactive({
         # Print the numeric output from the linear model
         if (is.numeric(input$num)) {
