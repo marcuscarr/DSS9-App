@@ -6,7 +6,7 @@ dig <- function(num, digits = 1) {
     return(format(num, nsmall=digits))
 }
 
-shinyServer(function(input, output) {
+shinyServer(function(input, output, session) {
     # Make new data frame with only selected variables
     selectedData <- reactive({
         data.frame(xval = trees[[input$xcol]], yval = trees[[input$ycol]])
@@ -17,9 +17,22 @@ shinyServer(function(input, output) {
         lm(yval ~ xval, data = selectedData())
     })
     
+    output$outputSlider <- renderUI({
+        # Get min, max, initial values for prediction slider
+        xval <- trees[[input$xcol]]
+        xmin <- min(xval)
+        xmax <- max(xval)
+        xinit <- round(mean(xmin, xmax), 1)
+        xname <- paste("Select", input$xcol, "to predict", input$ycol)
+        
+        # Make slider
+        sliderInput("inputSlider", label = xname, 
+                    min = xmin, max = xmax, value = xinit, step = 0.1)
+    })
+    
     # Return prediction and CI for input NUM
     makePredict <- reactive({
-        predict(makeFit(), data.frame(xval = input$num), 
+        predict(makeFit(), data.frame(xval = input$inputSlider), 
                 interval = "prediction", level = 0.68)
     })
     
@@ -33,11 +46,11 @@ shinyServer(function(input, output) {
         p <- p + stat_smooth(method = "lm")
         
         # If a predictor variable has been entered, plot a line for it as well.
-        if (!is.numeric(input$num)) p 
+        if (!is.numeric(input$inputSlider)) p 
         else {
             pred <- makePredict()
             p + annotate("pointrange",
-                         x = input$num,
+                         x = input$inputSlider,
                          y = pred[1],
                          ymin = pred[2], 
                          ymax = pred[3],
@@ -46,13 +59,9 @@ shinyServer(function(input, output) {
         }
     })
     
-    output$num_text <- reactive({
-        paste("Enter a value for", input$xcol)
-    })
-    
     output$fit_text <- reactive({
         # Print the numeric output from the linear model
-        if (is.numeric(input$num)) {
+        if (is.numeric(input$inputSlider)) {
             round_predict <- round(makePredict(),1)
             paste("Predicted", input$ycol, "is", dig(round_predict[1]), 
                   "with 68% CI", dig(round_predict[2]), 
@@ -63,9 +72,9 @@ shinyServer(function(input, output) {
     output$error_text <- reactive({
         # Warn if the input value is out of range for the supplied data
         select_data <- selectedData()
-        if (is.numeric(input$num) && (
-            input$num < min(select_data["xval"]) || 
-                input$num > max(select_data["xval"]))) {
+        if (is.numeric(input$inputSlider) && (
+            input$inputSlider < min(select_data["xval"]) || 
+                input$inputSlider > max(select_data["xval"]))) {
             "WARNING: Predictor value is out of range for the 
             training data set"
         } else ""

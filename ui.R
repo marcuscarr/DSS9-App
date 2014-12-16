@@ -1,4 +1,4 @@
-shinyUI(pageWithSidebar(
+shinyUI(fluidPage(
     
     # Application title
     titlePanel("Girth, Height and Volume for Black Cherry Trees"),
@@ -20,8 +20,8 @@ shinyUI(pageWithSidebar(
             selectInput("ycol", label = "Select Y-axis variable",
                         names(trees), selected = names(trees)[[3]]),
             
-            helpText(textOutput("num_text")),
-            numericInput("num", label = "", value = "", step = 0.5)
+            # Make a dynamic slider
+            uiOutput("outputSlider")
         ),
         
         # Show a plot of the generated distribution
